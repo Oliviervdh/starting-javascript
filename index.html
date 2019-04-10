@@ -413,21 +413,20 @@
         <script>
             // Write your code here
             var enterInput = document.getElementById("searchInput");
-            //var checkBox = document.getElementsByClassName("th-sm");
             var table = document.getElementById("searchTable");
+
+            window.addEventListener('load', addCheckBox);
 
             function addCheckBox() {
                 var box = document.createElement("INPUT");
                 box.setAttribute("type", "checkbox");
-                table.getElementsByTagName("thead",)[0].rows[0].children[3].appendChild(box);
+                table.getElementsByTagName("thead",)[0].rows[0].children[3].appendChild(box); // use a forEach loop to add to all the cols "Check how to get all elements by tag name, forEach loop"
 
             }
 
             enterInput.addEventListener('keyup', function() {
 
                     scanTable();
-                    addCheckBox();
-
 
                 function scanTable(){
                     var input, filter, table, tr, td, i, txtValue;
@@ -436,7 +435,7 @@
                     table = document.getElementById("searchTable");
                     tr = table.getElementsByTagName("tr");
                     for (i = 0; i < tr.length; i++) {
-                        td = tr[i].getElementsByTagName("td")[0];
+                        td = tr[i].getElementsByTagName("td")[0]; // use a forEach loop to check al fields
                         if (td) {
                             txtValue = td.textContent || td.innerText;
                             if (txtValue.toUpperCase().indexOf(filter) > -1) {
