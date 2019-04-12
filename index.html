@@ -413,32 +413,38 @@
         <script>
             // Write your code here
             var enterInput = document.getElementById("searchInput");
-            var table = document.getElementById("searchTable");
 
             window.addEventListener('load', addCheckBox);
-
             function addCheckBox() {
-                var box = document.createElement("INPUT");
-                box.setAttribute("type", "checkbox");
-                table.getElementsByTagName("thead",)[0].rows[0].children[3].appendChild(box); // use a forEach loop to add to all the cols "Check how to get all elements by tag name, forEach loop"
+                // 1select your table,  4 select all th "table headers"
+                var table = document.getElementsByTagName("table")[1]; // step 1
+                var headerRow = table.querySelectorAll("th"); // step 2 select all th's with querySelector.
 
+                for (let i=0; i< headerRow.length; i++){
+                    var box = document.createElement("INPUT");  // always put your var "createElement"  in your for loop if you want to create multiple checkboxes.
+                    box.setAttribute("type", "checkbox");
+                    box.checked = true;
+                    headerRow[i].appendChild(box);
+                    box.addEventListener('click', checkBoxValue) // add a eventListener to the button WITHIN the loop, so you can create a function afterwards.
+                }
             }
 
+
             enterInput.addEventListener('keyup', function() {
-
                     scanTable();
-
                 function scanTable(){
                     var input, filter, table, tr, td, i, txtValue;
-                    input = document.getElementById("searchInput");
-                    filter = input.value.toUpperCase();
-                    table = document.getElementById("searchTable");
-                    tr = table.getElementsByTagName("tr");
-                    for (i = 0; i < tr.length; i++) {
-                        td = tr[i].getElementsByTagName("td")[0]; // use a forEach loop to check al fields
+
+                    input = document.getElementById("searchInput"); // get your input.
+                    filter = input.value.toUpperCase(); // Makes it non case-sensitive.
+                    table = document.getElementById("searchTable"); // gets your table
+                    tr = table.getElementsByTagName("tr"); // gets your table tr's.
+                    for (i = 0; i < tr.length; i++) { // loops i until end of tr.length.
+                        td = tr[i].getElementsByTagName("td")[i]; // use a forEach loop to check al fields.
+
                         if (td) {
                             txtValue = td.textContent || td.innerText;
-                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) { // filters your table for matching content.
                                 tr[i].style.display = "";
                             } else {
                                 tr[i].style.display = "none";
@@ -447,6 +453,19 @@
                     }
                 }
             });
+
+
+
+            //var whichBox = document.getElementsByClassName('th-sm'); // if this does not work try querySelectorAll
+
+
+            function checkBoxValue () {
+                // Check if box.checked = true or false
+                // if false, check inner html/text
+
+                console.log("checked");
+            }
+
 
         </script>
     </div>
@@ -489,7 +508,7 @@
         <div class="col-12 bg-white shadow-sm p-4 mx-auto mt-4">
             <h3>Part 7: Sliiiiiders</h3>
             <p>Recreate this very intuitive user interface. Insert the DOM nodes (html elements) using document.createElement();</p>
-            <img src="../input.gif" alt="Interface" />
+            <!-- <img src="../input.gif" alt="Interface" /> -->
             <hr/>
             <br/>
 
