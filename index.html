@@ -107,17 +107,16 @@
             var getName = document.getElementById("name");
             var getPizza = document.getElementById("pizza");
             var getSize = document.getElementById("size");
-            var getRemarks = document.getElementById("remarks");
-            var cross = document.createElement('i');
             var inputStep2 = document.getElementById("emptyRow");
-            cross.setAttribute("class", "fas fa-times");
-            var emptyCell = []; // Empty array to push the input data from the table cells   // function implode = from array to string. look up the right name of the function
+            var emptyCell = [];
 
-            inputStep2.addEventListener('keyup', function(event){
+            inputStep2.addEventListener('keyup', checkInput);
+
+            function checkInput(){
 
                 if(event.keyCode === 13) {
 
-                    if (getName.value == "" && getPizza.value == "" && getSize.value == "") { // all are empty.
+                    if (getName.value == "" && getPizza.value == "" && getSize.value == "") {
                         alert("Please fill in your Name, style of pizza and the preferred size.");
                     }
 
@@ -128,30 +127,29 @@
                         alert("Please give up the preferred size of pizza.");
                     }
 
-                    else if (getName.value !== "" || getPizza.value !== "" || getSize.value !== ""){   // filled
-                        emptyCell.push(getSize.value); // Pushes the value from "getSize" into array "emptyCell"
+                    else if (getName.value !== "" || getPizza.value !== "" || getSize.value !== ""){
+                        emptyCell.push(getSize.value);
                         emptyCell.push(getPizza.value);
                         emptyCell.push(getSize.value);
-                        //getTable.rows[0].innerHTML= "cross";
-                        getRemarks.appendChild(cross);
                         appendRow();
-
-                        // add cross to last table cell "not finished
-                        var x=createCell.insertCell(-1);
-                        x.innerHTML="New cell";
-
-                        // Make a new row under the table with the input from the fields -1. // appendChild to table "row, column,..."
 
                         function appendRow(){
                         var getTable = document.getElementById("pizzaOrders");
                         var newRow = getTable.insertRow(getTable.rows.length);
+                        var addCross = document.createElement("button");
 
                             for (i = 0; i < getTable.rows[0].cells.length; i++) { // for loop that creates new cells until its not bigger then the row.
                                 createCell(newRow.insertCell(i), emptyCell[i],'newRow'); // defines what to put within the cell. in this case my array "emptyCell[0-3]"
                             }
-                        }
 
-                        // Creates a new sell and with a div, text node and adds style.
+                            addCross.classList.add("addCross","float-right");
+                            addCross.innerHTML="X";
+                            newRow.appendChild(addCross);
+
+                            var CrossElement = newRow.getElementsByClassName("addCross");
+                            CrossElement[0].addEventListener("click",deleteRow);
+
+                        }
 
                         function createCell(cell, text, style) {
                         var div = document.createElement('div'), // create DIV element
@@ -163,7 +161,14 @@
                         }
                     }
                 }
-            });
+            }
+
+            function deleteRow(){
+                this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
+            }
+
+
+
 
         </script>
     </div>
@@ -201,11 +206,13 @@
             var secondItem = document.createElement("li");
             var thirdItem = document.createElement("li");
             var fourthItem = document.createElement("li");
+            var finalItem = document.createElement("li");
             var newInput = document.createElement("input");
             newInput.setAttribute('placeholder', 'Choose your final ingredient');
 
 
             hitMe.addEventListener('click', addListToBody);
+            newInput.addEventListener("focusout", createNewLi);
 
             function addListToBody() {
 
@@ -218,11 +225,20 @@
                     newList.appendChild(firstItem);
                     newList.appendChild(secondItem);
                     newList.appendChild(thirdItem);
+                    newList.appendChild(finalItem);
                     newList.appendChild(fourthItem);
-
 
                 }
                 document.getElementById('location').appendChild(newList);
+            }
+
+            function createNewLi(){
+
+                if (newInput.value !== ""){
+                    finalItem.innerHTML = newInput.value;
+                    newList.appendChild(finalItem);
+                }
+
             }
 
 
@@ -412,58 +428,79 @@
         </div>
         <script>
             // Write your code here
-            var enterInput = document.getElementById("searchInput");
 
-            window.addEventListener('load', addCheckBox);
-            function addCheckBox() {
-                // 1select your table,  4 select all th "table headers"
-                var table = document.getElementsByTagName("table")[1]; // step 1
-                var headerRow = table.querySelectorAll("th"); // step 2 select all th's with querySelector.
+            var input = document.getElementById("searchInput");
+            var table = document.getElementById("searchTable");
+            var tr = table.getElementsByTagName("tr");
+            input.addEventListener("keyup",search);
 
-                for (let i=0; i< headerRow.length; i++){
-                    var box = document.createElement("INPUT");  // always put your var "createElement"  in your for loop if you want to create multiple checkboxes.
-                    box.setAttribute("type", "checkbox");
-                    box.checked = true;
-                    headerRow[i].appendChild(box);
-                    box.addEventListener('click', checkBoxValue) // add a eventListener to the button WITHIN the loop, so you can create a function afterwards.
-                }
-            }
+            function search() {
+
+                var filter, td, i, txtValue;
+                filter = input.value.toUpperCase();
 
 
-            enterInput.addEventListener('keyup', function() {
-                    scanTable();
-                function scanTable(){
-                    var input, filter, table, tr, td, i, txtValue;
-
-                    input = document.getElementById("searchInput"); // get your input.
-                    filter = input.value.toUpperCase(); // Makes it non case-sensitive.
-                    table = document.getElementById("searchTable"); // gets your table
-                    tr = table.getElementsByTagName("tr"); // gets your table tr's.
-                    for (i = 0; i < tr.length; i++) { // loops i until end of tr.length.
-                        td = tr[i].getElementsByTagName("td")[i]; // use a forEach loop to check al fields.
-
-                        if (td) {
-                            txtValue = td.textContent || td.innerText;
-                            if (txtValue.toUpperCase().indexOf(filter) > -1) { // filters your table for matching content.
-                                tr[i].style.display = "";
-                            } else {
-                                tr[i].style.display = "none";
-                            }
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
                         }
                     }
                 }
-            });
-
-
-
-            //var whichBox = document.getElementsByClassName('th-sm'); // if this does not work try querySelectorAll
-
-
-            function checkBoxValue () {
-                // Check if box.checked = true or false
-                // if false, check inner html/text
-
-                console.log("checked");
+            }
+            var thList = table.getElementsByTagName('th');
+            var checkboxList = new Array(thList.length);
+            for (let i=0; i < thList.length ; i++){
+                checkboxList[i]=document.createElement('input');
+                checkboxList[i].type="checkbox";
+                checkboxList[i].checked=true;
+                checkboxList[i].classList.add("float-right","mt-1");
+                checkboxList[i].id="checkbox"+i;
+                thList[i].appendChild(checkboxList[i]);
+                checkboxList[i].addEventListener('click',removeColumn)
+            }
+            function removeColumn(){
+                var columnNumber;
+                switch (this.id) {
+                    case "checkbox0":
+                        columnNumber=0;
+                        break;
+                    case "checkbox1":
+                        columnNumber=1;
+                        break;
+                    case "checkbox2":
+                        columnNumber=2;
+                        break;
+                    case "checkbox3":
+                        columnNumber=3;
+                        break;
+                    case "checkbox4":
+                        columnNumber=4;
+                        break;
+                    case "checkbox5":
+                        columnNumber=5;
+                        break;
+                    default:
+                }
+                if (this.checked == true){
+                    for (i = 0; i < tr.length; i++) {
+                        var tdata = tr[i].getElementsByTagName("td");
+                        if (tdata[0]) {
+                            tdata[columnNumber].style.display="";
+                        }
+                    }
+                } else {
+                    for (i = 0; i < tr.length; i++) {
+                        var tdata = tr[i].getElementsByTagName("td");
+                        if (tdata[0]) {
+                            tdata[columnNumber].style.display="none";
+                        }
+                    }
+                }
             }
 
 
@@ -483,6 +520,32 @@
         </div>
         <script>
             // Write your code here
+
+            var box1 = document.getElementById("moveAnimation");
+            box1.style.position = 'relative';
+            box1.style.left = 0;
+            moveRight();
+            function moveRight(){
+                box1.style.transition = '2s linear';
+                setTimeout(function(){
+                    box1.style.left='100%';
+                    setTimeout(function(){
+                        moveLeft();
+                    },2000);
+                },100);
+            }
+            function moveLeft(){
+                box1.style.transition='5s linear';
+                setTimeout(function(){
+                    box1.style.left=0;
+                    setTimeout(function(){
+                        moveRight();
+                    },5000);
+                },100);
+            }
+
+
+
         </script>
     </div>
     <!-- END OF Part 5 -->
@@ -499,6 +562,23 @@
         </div>
         <script>
             // Write your code here
+            var block = document.getElementById('followMouse');
+            block.style.position="relative";
+            block.style.left=0;
+            var deviation=block.offsetParent.offsetLeft;
+            var deviationRight=block.parentNode.clientWidth-block.clientWidth;
+            document.addEventListener('mousemove', followMouseHorizontally);
+            function followMouseHorizontally(){
+                var movement = event.pageX;
+                if (movement<=deviation){
+                    block.style.left=0;
+                } else if (movement>(deviation+deviationRight)){
+                    block.style.left='100%';
+                } else {
+                    block.style.left=(movement-deviation)+"px";
+                }
+            }
+
         </script>
     </div>
     <!-- END OF Part 6 -->
@@ -516,6 +596,87 @@
         </div>
         <script>
             // Write your code here
+
+            sliderInput("target");
+            function sliderInput(target) {
+                const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+                var inputstring = "";
+                var currentletter = "";
+                var focussed = false;
+                var target = document.getElementById(target);
+                var nameinput = document.createElement("input");
+                target.appendChild(nameinput);
+                nameinput.onfocus = function() {
+                    if (!focussed) {
+                        var btn = document.createElement("button");
+                        btn.innerHTML = "Add letter.";
+                        btn.style.display = "block";
+                        target.appendChild(btn);
+                        focussed = true;
+                        btn.addEventListener("click", addSlider);
+                    }
+                }
+                function addSlider() {
+                    inputstring += currentletter;
+                    var mousedown;
+                    var slidercontainer = document.createElement("div");
+                    slidercontainer.setAttribute("class", "my-1");
+                    var sliderletter = document.createElement("div");
+                    sliderletter.setAttribute("class", "d-inline-block")
+                    sliderletter.innerText = "A";
+                    var slider = createSlider();
+                    var sliderbox = createSliderBox();
+                    var slideroverlay = createSliderOverlay();
+                    target.insertBefore(slidercontainer, target.childNodes[target.childNodes.length - 1]);
+                    slidercontainer.appendChild(sliderletter);
+                    slidercontainer.appendChild(slider);
+                    slider.appendChild(sliderbox);
+                    slider.appendChild(slideroverlay);
+                    slideroverlay.onmousedown = function() {
+                        mousedown = true;
+                        sliderbox.classList.remove("bg-dark");
+                        sliderbox.classList.add("bg-info");
+                        event.target.onmousemove = function() {
+                            if (mousedown) {
+                                sliderpos = event.target.getBoundingClientRect();
+                                spos = Math.floor((event.clientX - sliderpos.left) / 10);
+                                if (spos <= 0) {
+                                    spos = 0;
+                                }
+                                sliderbox.style.left = spos * 10 + "px";
+                                currentletter = alphabet[spos];
+                                sliderletter.innerText = currentletter;
+                                nameinput.value = inputstring + currentletter;
+                            }
+                        }
+                    };
+                    slideroverlay.onmouseup = function() {
+                        mousedown = false;
+                        sliderbox.classList.remove("bg-info");
+                        sliderbox.classList.add("bg-dark");
+                    };
+                }
+                function createSlider() {
+                    var slider = document.createElement("div");
+                    slider.setAttribute("class", "bg-light my-auto ml-1 d-inline-block position-relative");
+                    slider.style.width = "260px";
+                    slider.style.height = "12px";
+                    return slider;
+                }
+                function createSliderBox() {
+                    var sliderbox = document.createElement("div");
+                    sliderbox.setAttribute("class", "bg-dark d-inline-block h-100 position-absolute");
+                    sliderbox.style.width = "10px";
+                    return sliderbox;
+                }
+                function createSliderOverlay() {
+                    var slideroverlay = document.createElement("div");
+                    slideroverlay.setAttribute("class", "position-absolute w-100 h-100 d-inline-block");
+                    slideroverlay.style.zIndex = "777";
+                    return slideroverlay
+                }
+            }
+
         </script>
     </div>
     <!-- END OF Part 7 -->
@@ -532,6 +693,7 @@
         </div>
         <script>
             // You can put at most one line here
+            sliderInput("target2");
         </script>
     </div>
     <!-- END OF Part 8 -->
